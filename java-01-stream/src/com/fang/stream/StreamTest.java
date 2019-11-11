@@ -34,6 +34,12 @@ public class StreamTest {
                 .reduce(0L, Long::sum);
     }
 
+    public static long rangedSum(long n) {
+        return LongStream.rangeClosed(1, n)
+                .parallel()
+                .reduce(0L, Long::sum);
+    }
+
     /**
      * 传统方式
      * @param n
@@ -48,13 +54,15 @@ public class StreamTest {
     }
 
     public static void measureSumPref(Function<Long, Long> func, long n) {
-        long start = System.nanoTime();
+        long start = System.currentTimeMillis();
         long result = func.apply(n);
-        System.out.println(String.format("用时：%s, 结果：%s", System.nanoTime() - start, result));
+        System.out.println(String.format("用时：%s, 结果：%s", System.currentTimeMillis() - start, result));
     }
     public static void main(String[] args) {
-        measureSumPref(StreamTest::iterativeSum, 10000);
-        measureSumPref(StreamTest::sequentialSum, 10000);
-        measureSumPref(StreamTest::paralleSum, 10000);
+        long n = 10_000_000L;
+        measureSumPref(StreamTest::iterativeSum, n);
+        measureSumPref(StreamTest::sequentialSum, n);
+        measureSumPref(StreamTest::paralleSum, n);
+        measureSumPref(StreamTest::rangedSum, n);
     }
 }
